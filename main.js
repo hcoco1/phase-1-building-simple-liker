@@ -1,45 +1,34 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const EMPTY_HEART = '♡'
-  const FULL_HEART = '♥'
-  const likeButtons = document.querySelectorAll('.like-glyph');
-  const modal = document.getElementById('modal');
+// Defining text characters for the empty and full hearts for you to use later.
+const EMPTY_HEART = '♡'
+const FULL_HEART = '♥'
 
-  //likebuttons is an array, we must use forEach
-  likeButtons.forEach(button => {
-    like(button)
-  });
 
-//When a user clicks
-  function like(button) {
-    button.addEventListener('click', (event) => {
-      if (event.target.innerHTML === EMPTY_HEART) {
-        mimicServerCall().then(() => {
-            event.target.innerHTML = FULL_HEART;
-            event.target.setAttribute('class', 'like-glyph activated-heart');
-        }).catch(() => {
-            displayError(function(){
-                event.target.innerHTML = FULL_HEART;
-                event.target.setAttribute('class', 'like-glyph activated-heart');
-            });
-        });
-      } else {
-        event.target.innerHTML = EMPTY_HEART
-        event.target.setAttribute('class', 'like-glyph')
-      }
+  let hearts = document.querySelectorAll('.like-glyph');
+  hearts.forEach((heart) => {
+    heart.addEventListener("click", (e) => {
+      mimicServerCall()
+      .then((data) => {
+        const heartUpdate = e.target
+        if (e.target.innerText === EMPTY_HEART){
+          heartUpdate.innerText = FULL_HEART;
+          heartUpdate.className = "activated-heart"
+        } else {
+          heartUpdate.innerText = EMPTY_HEART;
+          heartUpdate.className = "like-glyph"
+        }
+        
+
+      })
+      .catch((err) => {
+        const errorBar = document.getElementById("modal")
+        errorBar.className = " "
+        setTimeout(()=>{
+          errorBar.className = "hidden"
+        }, 3000)
+      })
+      
     });
-  };
-
-  //Respond to the error
-  function displayError(callback) {
-    modal.removeAttribute('class');
-    setTimeout(function(){
-        modal.setAttribute('class','hidden');
-        callback();
-    }, 3000);
-  };
-});
-
-
+  });
 
 //------------------------------------------------------------------------------
 // Don't change the code below: this function mocks the server response
